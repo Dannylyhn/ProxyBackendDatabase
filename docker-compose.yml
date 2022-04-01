@@ -1,0 +1,38 @@
+version: '3.5'
+services:
+ 
+  db: 
+    image: "gitlab.sdu.dk:5050/odw-e2020/docker:mysql-5.7"
+    environment:
+       MYSQL_ROOT_PASSWORD: "hej123"
+    restart: "always"
+    volumes:
+      - "./services/database/:/docker-entrypoint-initdb.d/"
+    networks: 
+      - "network2"
+
+  app:
+    build: "./services/backend/"
+    restart: "always"
+    links:
+      - "db"
+    networks:
+      - "network1"
+      - "network2"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - "db"
+
+  proxy:
+    build: "./services/proxy"
+    networks: 
+      - "network1"
+    ports:
+      - "443:443"
+    
+networks:  
+  network1:
+
+  network2:
+
